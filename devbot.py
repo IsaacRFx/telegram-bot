@@ -125,7 +125,7 @@ if __name__ == "__main__":
         logger.info("Starting webhook")
         application.run_webhook(
             listen="0.0.0.0",
-            port=config("PORT", default=8443, cast=int),
+            port=config("PORT"),
             url_path=config("API_TOKEN"),
             webhook_url=config("WEBHOOK_URL") + config("API_TOKEN"),
         )
