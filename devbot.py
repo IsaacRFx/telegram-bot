@@ -1,3 +1,4 @@
+from ctypes import cast
 import logging
 import os
 from telegram import (
@@ -84,7 +85,12 @@ async def question(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.message.from_user
     userQuestion = update.message.text
     logger.info("Question of %s: %s", user.first_name, update.message.text)
-    await update.message.reply_text("You're looking for: " + userQuestion + "\n")
+    query = {"query": userQuestion}
+    reply = requests.post('http://localhost:8000/api/scrape/', json=query).json()['results']
+    readable_reply = str(reply).replace('\\n', '')
+    print(reply)
+    print(readable_reply)
+    await update.message.reply_text(readable_reply)
 
     return ConversationHandler.END
 
@@ -102,7 +108,7 @@ async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 if __name__ == "__main__":
 
-    WEBHOOK = config("WEBHOOK", default=False)
+    WEBHOOK = config("WEBHOOK", default=False, cast=bool)
 
     application = ApplicationBuilder().token(config("API_TOKEN")).build()
     logger.info("Starting bot")
@@ -129,6 +135,5 @@ if __name__ == "__main__":
             url_path=config("API_TOKEN"),
             webhook_url=config("WEBHOOK_URL") + config("API_TOKEN"),
         )
-        
     else:
         application.run_polling()
