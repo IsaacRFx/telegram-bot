@@ -1,5 +1,6 @@
 from ctypes import cast
 import logging
+from html import unescape
 import os
 from telegram import (
     Update,
@@ -9,6 +10,7 @@ from telegram import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     ReplyKeyboardRemove,
+    
 )
 from telegram.ext import (
     filters,
@@ -20,10 +22,14 @@ from telegram.ext import (
     ConversationHandler,
     CallbackQueryHandler,
 )
+from telegram.helpers import escape_markdown
+from telegram.constants import ParseMode
 from decouple import config
 from uuid import uuid4
 import requests
 import json
+
+ACCEPTED_TAGS = ['b','i','u','s','b','a','code','pre']
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -70,7 +76,7 @@ async def choose(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if callbackData.data == "reddit":
         await update.callback_query.message.edit_text(
             "It seems you've chosen Reddit. Please type your question."
-        )
+        )   
     if callbackData.data == "leave":
         await update.callback_query.message.edit_text(
             "Bye! I hope we can talk again some day."
@@ -87,10 +93,9 @@ async def question(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info("Question of %s: %s", user.first_name, update.message.text)
     query = {"query": userQuestion}
     reply = requests.post('http://localhost:8000/api/scrape/', json=query).json()['results']
-    readable_reply = str(reply).replace('\\n', '')
-    print(reply)
+    readable_reply = str(reply).replace('<div>', '').replace('</div>', '').replace('<p>', '').replace('</p>', '').replace('<hr/>','').replace('<h2>','').replace('</h2>', '')
     print(readable_reply)
-    await update.message.reply_text(readable_reply)
+    await update.message.reply_text(text = readable_reply, parse_mode = ParseMode.HTML)
 
     return ConversationHandler.END
 
