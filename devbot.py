@@ -29,7 +29,7 @@ from uuid import uuid4
 import requests
 import json
 
-ACCEPTED_TAGS = ['b','i','u','s','b','a','code','pre']
+
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -93,7 +93,7 @@ async def question(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logger.info("Question of %s: %s", user.first_name, update.message.text)
     query = {"query": userQuestion}
     reply = requests.post('http://localhost:8000/api/scrape/', json=query).json()['results']
-    readable_reply = str(reply).replace('<div>', '').replace('</div>', '').replace('<p>', '').replace('</p>', '').replace('<hr/>','').replace('<h2>','').replace('</h2>', '')
+    readable_reply = str(reply)
     print(readable_reply)
     await update.message.reply_text(text = readable_reply, parse_mode = ParseMode.HTML)
 
