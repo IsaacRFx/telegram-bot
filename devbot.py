@@ -46,7 +46,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Send a message when the command /start is issued."""
-
+    print("-Testing deployment")
     logger.info("User %s started the conversation. %s", update.message.from_user.full_name, update.message.from_user.id)
     keyboard = [
         [
