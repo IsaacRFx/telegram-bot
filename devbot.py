@@ -90,7 +90,7 @@ async def question(update: Update, context: ContextTypes.DEFAULT_TYPE):
     userQuestion = update.message.text
     logger.info("Question of %s: %s", user.first_name, update.message.text)
     query = {"query": userQuestion}
-    reply = requests.post(f'{config("WEBHOOK_URL", "")}/api/scrape/', json=query).json()['results']
+    reply = requests.post(f'{config("WEBHOOK_URL", "")}api/scrape/', json=query).json()['results']
     readable_reply = str(reply)
     print(readable_reply)
     await update.message.reply_text(text = readable_reply, parse_mode = ParseMode.HTML)
@@ -136,7 +136,7 @@ if __name__ == "__main__":
             listen="0.0.0.0",
             port=config("PORT"),
             url_path=config("API_TOKEN"),
-            webhook_url=config("WEBHOOK_URL") + "/" + config("API_TOKEN"),
+            webhook_url=config("WEBHOOK_URL") + config("API_TOKEN"),
         )
     else:
         application.run_polling()
