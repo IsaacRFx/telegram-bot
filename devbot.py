@@ -90,11 +90,10 @@ async def question(update: Update, context: ContextTypes.DEFAULT_TYPE):
     userQuestion = update.message.text
     logger.info("Question of %s: %s", user.first_name, update.message.text)
     query = {"query": userQuestion}
-    print(query)
+    logger.info("Query: %s", 9query)
     reply = requests.post(f'{config("WEBHOOK_URL", "")}api/scrape/', json=query).json()
-    print(reply)
+    logger.info("Request: %s", str(reply))
     readable_reply = str(reply['results'])
-    print(readable_reply)
     await update.message.reply_text(text = readable_reply, parse_mode = ParseMode.HTML)
 
     return ConversationHandler.END
